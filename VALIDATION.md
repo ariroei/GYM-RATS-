@@ -1,4 +1,38 @@
-# Prototype setup validation
+# GYM RATS validation
+
+## Playable movement prototype - 2026-09-28
+
+Validated in the existing Unity 6000.6.3f1 Editor with URP and Input System 1.20.0.
+
+- C# compilation completed without errors.
+- All **4 Edit Mode tests** passed: scene floor/lighting/material integrity,
+  rat camera framing and target, build scene order, and device binding resolution.
+- All **7 Play Mode integration tests** passed in the real GymPrototype scene:
+  - Keyboard movement relative to a rotated camera, visual turning, and stopping.
+  - Keyboard jumping, landing, and holding jump without automatic repeat jumps.
+  - Analog/full-speed gamepad movement, gamepad jumping, and no second airborne jump.
+  - Normalized diagonal speed, camera tracking, and camera settling after stopping.
+  - Camera obstruction avoidance and restoration of follow distance.
+  - Walking off the arena, falling under gravity, respawning, and camera recovery.
+  - Ceiling collision followed by a return to the ground.
+- Input tests use isolated virtual keyboard/gamepad devices and restore the
+  previous Input System after cleanup. An initial fixture lifecycle failure was
+  fixed before the final successful run.
+- Normal Play Mode was also opened separately. The rat stood grounded at rest,
+  the camera followed the correct target, and a front/three-quarter screenshot
+  confirmed the temporary muscular rat is recognizable. The console contained
+  no errors or warnings in that session. Play Mode was stopped afterward.
+- The previous sample scene, input asset, package versions, and rendering
+  configuration were preserved. Git whitespace and asset metadata checks passed.
+
+Limitations: no physical gamepad was operated, and subjective controller feel
+still needs human playtesting. Coyote time and jump buffering are implemented
+but their timing windows were not individually asserted by these tests. No new
+standalone build was made in this step; the build described below predates the
+playable character. Combat, grabbing, multiplayer, and camera orbit controls
+are outside this step.
+
+## Earlier static foundation validation
 
 Validated on 2026-09-28 in Unity 6000.6.3f1 on Windows.
 
@@ -22,7 +56,7 @@ Validated on 2026-09-28 in Unity 6000.6.3f1 on Windows.
 
 The build executable was produced but not launched. Physical keyboard/gamepad
 playtesting and multiplayer device pairing remain for future gameplay work.
-The scene is a static foundation; fighters, movement, combat, and pause behavior
-are not implemented. Build output, screenshots, and generated performance-test
+At that stage the scene was a static foundation without character movement.
+Build output, screenshots, and generated performance-test
 data are excluded from Git. Automatic build-only URP serialization and Unity
 connection changes were reverted after validation.

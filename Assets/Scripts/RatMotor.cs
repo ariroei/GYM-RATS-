@@ -1,0 +1,194 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace GymRats
+{
+    [RequireComponent(typeof(CharacterController))]
+    public sealed class RatMotor : MonoBehaviour
+    {
+        [Header("References")]
+        [SerializeField] private InputActionAsset inputActions;
+        [SerializeField] private Transform movementCamera;
+        [SerializeField] private Transform visualRoot;
+
+        [Header("Movement")]
+        [SerializeField, Min(0.1f)] private float moveSpeed = 6f;
+        [SerializeField, Min(0.1f)] private float acceleration = 40f;
+        [SerializeField, Min(0.1f)] private float deceleration = 55f;
+        [SerializeField, Min(1f)] private float turnSpeed = 720f;
+        [SerializeField, Range(0f, 1f)] private float airControl = 0.8f;
+
+        [Header("Jump and grounding")]
+        [SerializeField, Min(0.1f)] private float jumpHeight = 1.65f;
+        [SerializeField, Min(0.1f)] private float gravity = 28f;
+        [SerializeField, Min(1f)] private float terminalSpeed = 35f;
+        [SerializeField, Min(0f)] private float coyoteTime = 0.12f;
+        [SerializeField, Min(0f)] private float jumpBufferTime = 0.12f;
+        [SerializeField, Range(0.01f, 0.3f)] private float groundProbeDistance = 0.1f;
+        [SerializeField] private LayerMask groundLayers = ~0;
+
+        [Header("Recovery")]
+        [Tooltip("Return to the starting position after falling below this world height.")]
+        [SerializeField] private float respawnHeight = -8f;
+
+        private CharacterController controller;
+        private InputActionAsset runtimeActions;
+        private InputAction moveAction;
+        private InputAction jumpAction;
+        private readonly RaycastHit[] groundHits = new RaycastHit[16];
+        private Vector3 spawnPosition;
+        private Quaternion spawnRotation;
+        private Vector3 planarVelocity;
+        private float verticalSpeed;
+        private float lastGroundedTime = float.NegativeInfinity;
+        private float lastJumpTime = float.NegativeInfinity;
+
+        public bool IsGrounded { get; private set; }
+        public Vector3 PlanarVelocity => planarVelocity;
+        public float VerticalSpeed => verticalSpeed;
+        public float MoveSpeed => moveSpeed;
+
+        private void Awake()
+        {
+            controller = GetComponent<CharacterController>();
+            spawnPosition = transform.position;
+            spawnRotation = visualRoot != null ? visualRoot.rotation : transform.rotation;
+            if (movementCamera == null && Camera.main != null)
+                movementCamera = Camera.main.transform;
+        }
+
+        private void OnEnable()
+        {
+            if (inputActions == null)
+            {
+                Debug.LogError("RatMotor requires an Input Action Asset.", this);
+                enabled = false;
+                return;
+            }
+
+            // Own a copy so disabling this character never disables project-wide UI input.
+            runtimeActions = Instantiate(inputActions);
+            moveAction = runtimeActions.FindAction("Player/Move", true);
+            jumpAction = runtimeActions.FindAction("Player/Jump", true);
+            jumpAction.performed += QueueJump;
+            moveAction.Enable();
+            jumpAction.Enable();
+        }
+
+        private void OnDisable()
+        {
+            if (jumpAction != null)
+                jumpAction.performed -= QueueJump;
+            if (runtimeActions != null)
+            {
+                runtimeActions.Disable();
+                Destroy(runtimeActions);
+            }
+            runtimeActions = null;
+            moveAction = null;
+            jumpAction = null;
+            planarVelocity = Vector3.zero;
+            verticalSpeed = 0f;
+            lastGroundedTime = lastJumpTime = float.NegativeInfinity;
+            IsGrounded = false;
+        }
+
+        private void QueueJump(InputAction.CallbackContext context)
+        {
+            lastJumpTime = Time.time;
+        }
+
+        private void Update()
+        {
+            if (!controller.enabled || moveAction == null)
+                return;
+            if (transform.position.y < respawnHeight)
+            {
+                Respawn();
+                return;
+            }
+
+            float deltaTime = Time.deltaTime;
+            if (deltaTime <= 0f)
+                return;
+
+            IsGrounded = verticalSpeed <= 0f && ProbeGround();
+            if (IsGrounded)
+            {
+                lastGroundedTime = Time.time;
+                verticalSpeed = -2f;
+            }
+
+            Vector2 input = Vector2.ClampMagnitude(moveAction.ReadValue<Vector2>(), 1f);
+            Vector3 forward = movementCamera != null ? movementCamera.forward : Vector3.forward;
+            forward = Vector3.ProjectOnPlane(forward, Vector3.up);
+            if (forward.sqrMagnitude < 0.001f)
+                forward = Vector3.forward;
+            forward.Normalize();
+            Vector3 right = Vector3.Cross(Vector3.up, forward);
+            Vector3 desiredVelocity = (forward * input.y + right * input.x) * moveSpeed;
+            float rate = input.sqrMagnitude > 0.001f ? acceleration : deceleration;
+            planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity,
+                rate * (IsGrounded ? 1f : airControl) * deltaTime);
+
+            if (desiredVelocity.sqrMagnitude > 0.01f)
+            {
+                Transform facing = visualRoot != null ? visualRoot : transform;
+                facing.rotation = Quaternion.RotateTowards(facing.rotation,
+                    Quaternion.LookRotation(desiredVelocity, Vector3.up), turnSpeed * deltaTime);
+            }
+
+            if (Time.time - lastJumpTime <= jumpBufferTime && Time.time - lastGroundedTime <= coyoteTime)
+            {
+                verticalSpeed = Mathf.Sqrt(2f * gravity * jumpHeight);
+                lastJumpTime = lastGroundedTime = float.NegativeInfinity;
+                IsGrounded = false;
+            }
+
+            verticalSpeed = Mathf.Max(verticalSpeed - gravity * deltaTime, -terminalSpeed);
+            CollisionFlags flags = controller.Move((planarVelocity + Vector3.up * verticalSpeed) * deltaTime);
+            if ((flags & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
+                verticalSpeed = 0f;
+            if ((flags & CollisionFlags.Below) != 0 && verticalSpeed <= 0f)
+            {
+                IsGrounded = true;
+                verticalSpeed = -2f;
+                lastGroundedTime = Time.time;
+            }
+        }
+
+        private bool ProbeGround()
+        {
+            // Use a slightly inset sphere and reject the player, triggers, and steep walls.
+            Vector3 center = transform.TransformPoint(controller.center);
+            float radius = controller.radius * 0.9f;
+            const float lift = 0.05f;
+            Vector3 origin = center - Vector3.up * (controller.height * 0.5f - controller.radius - lift);
+            float distance = groundProbeDistance + lift + controller.radius - radius;
+            int count = Physics.SphereCastNonAlloc(origin, radius, Vector3.down, groundHits,
+                distance, groundLayers, QueryTriggerInteraction.Ignore);
+            float minimumNormalY = Mathf.Cos(controller.slopeLimit * Mathf.Deg2Rad);
+            for (int i = 0; i < count; i++)
+            {
+                if (groundHits[i].collider.transform.IsChildOf(transform))
+                    continue;
+                if (groundHits[i].normal.y >= minimumNormalY)
+                    return true;
+            }
+            return false;
+        }
+
+        private void Respawn()
+        {
+            controller.enabled = false;
+            transform.position = spawnPosition;
+            if (visualRoot != null)
+                visualRoot.rotation = spawnRotation;
+            controller.enabled = true;
+            planarVelocity = Vector3.zero;
+            verticalSpeed = 0f;
+            lastGroundedTime = lastJumpTime = float.NegativeInfinity;
+            IsGrounded = false;
+        }
+    }
+}

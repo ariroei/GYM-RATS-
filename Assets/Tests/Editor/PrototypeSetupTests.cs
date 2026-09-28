@@ -12,7 +12,7 @@ namespace GymRats.Tests
         private const string ScenePath = "Assets/Scenes/GymPrototype.unity";
 
         [Test]
-        public void PrototypeHasSolidFloorLightingAndVisibleArena()
+        public void PrototypeHasSolidFloorLightingAndVisibleRat()
         {
             // A preview scene avoids replacing or saving the user's open scenes.
             var scene = EditorSceneManager.OpenPreviewScene(ScenePath);
@@ -34,10 +34,12 @@ namespace GymRats.Tests
                 Assert.That(cameras.Length, Is.EqualTo(1));
                 Assert.That(cameras[0].CompareTag("MainCamera"), Is.True);
                 cameras[0].aspect = 16f / 9f;
-                foreach (var x in new[] { -10f, 10f })
-                foreach (var z in new[] { -7f, 7f })
+                var rat = objects.Select(obj => obj.GetComponent<RatMotor>()).First(motor => motor != null);
+                Assert.That(rat.GetComponent<CharacterController>(), Is.Not.Null);
+                Assert.That(cameras[0].GetComponent<RatFollowCamera>().Target, Is.EqualTo(rat.transform));
+                foreach (var height in new[] { 0.1f, 2.95f })
                 {
-                    var point = cameras[0].WorldToViewportPoint(new Vector3(x, 0f, z));
+                    var point = cameras[0].WorldToViewportPoint(rat.transform.position + Vector3.up * height);
                     Assert.That(point.z, Is.GreaterThan(0));
                     Assert.That(point.x, Is.InRange(0f, 1f));
                     Assert.That(point.y, Is.InRange(0f, 1f));

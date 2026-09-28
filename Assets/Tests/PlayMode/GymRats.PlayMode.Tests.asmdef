@@ -1,0 +1,7 @@
+{
+    "name": "GymRats.PlayMode.Tests",
+    "rootNamespace": "GymRats.Tests",
+    "references": ["GymRats.Runtime", "Unity.InputSystem", "Unity.InputSystem.TestFramework"],
+    "optionalUnityReferences": ["TestAssemblies"],
+    "autoReferenced": false
+}

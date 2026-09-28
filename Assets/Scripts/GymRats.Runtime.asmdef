@@ -1,0 +1,5 @@
+{
+    "name": "GymRats.Runtime",
+    "rootNamespace": "GymRats",
+    "references": ["Unity.InputSystem"]
+}

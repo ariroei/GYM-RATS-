@@ -1,7 +1,7 @@
 {
     "name": "GymRats.Editor.Tests",
     "rootNamespace": "GymRats.Tests",
-    "references": ["Unity.InputSystem"],
+    "references": ["Unity.InputSystem", "GymRats.Runtime"],
     "includePlatforms": ["Editor"],
     "optionalUnityReferences": ["TestAssemblies"],
     "autoReferenced": false
