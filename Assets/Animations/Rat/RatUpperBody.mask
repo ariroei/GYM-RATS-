@@ -1,0 +1,271 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Rat Upper Body
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000u
+  m_Elements:
+  - m_Path: 
+    m_Weight: 0
+  - m_Path: Rig
+    m_Weight: 0
+  - m_Path: Rig/Hips
+    m_Weight: 0
+  - m_Path: Rig/Hips/Spine
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarL
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarL/Ear Rim L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarL/Ear Inner L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarL/Ear Warm Center L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarL/Ear Tape
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarR
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarR/Ear Rim R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarR/Ear Inner R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EarR/Ear Warm Center R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/BrowL
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/BrowL/Expressive Brow L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/BrowR
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/BrowR/Expressive Brow R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeL
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeL/Eye White L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeL/Amber Iris L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeL/Pupil L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeL/Eye Spark L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeR
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeR/Eye White R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeR/Amber Iris R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeR/Pupil R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/EyeR/Eye Spark R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Jaw
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Jaw/Smile
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Jaw/Chin
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Jaw/Incisor L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Jaw/Incisor R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Head
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Forehead Patch
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Long Tapered Muzzle
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Nose
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Nose Glint
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Cheek L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Whisker L0
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Whisker L1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Whisker L2
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Cheek R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Whisker R0
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Whisker R1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Head/Whisker R2
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Neck/Neck
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL/Sweatband L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL/Band Edge L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL/Paw L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL/Thumb L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL/Knuckle L-1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL/Knuckle L0
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/HandL/Knuckle L1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/ForearmL/Forearm L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/Deltoid L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmL/Biceps L
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR/Sweatband R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR/Band Edge R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR/Paw R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR/Thumb R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR/Knuckle R-1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR/Knuckle R0
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/HandR/Knuckle R1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/ForearmR/Forearm R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/Deltoid R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/UpperArmR/Biceps R
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Power Torso
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Singlet
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Chest Bib
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Back Panel
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Back Stripe
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Gym Emblem Bar
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Gym Emblem Plate -1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Singlet Strap -1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Gym Emblem Plate 1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Chest/Singlet Strap 1
+    m_Weight: 1
+  - m_Path: Rig/Hips/Spine/Tapered Waist
+    m_Weight: 1
+  - m_Path: Rig/Hips/ThighL
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Ankle Wrap L
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Foot L
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Toe L-1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Claw L-1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Toe L0
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Claw L0
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Toe L1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/FootL/Claw L1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/ShinL/Calf L
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/Thigh L
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/Short Leg L
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighL/Short Stripe L
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Ankle Wrap R
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Foot R
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Toe R-1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Claw R-1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Toe R0
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Claw R0
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Toe R1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/FootR/Claw R1
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/ShinR/Calf R
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/Thigh R
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/Short Leg R
+    m_Weight: 0
+  - m_Path: Rig/Hips/ThighR/Short Stripe R
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid/TailCurl
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid/TailCurl/TailTip
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid/TailCurl/TailTip/Tail Tip
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid/TailCurl/TailCurl Skin
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid/TailCurl/TailCurl Joint
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid/TailMid Skin
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailMid/TailMid Joint
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailBase Skin
+    m_Weight: 0
+  - m_Path: Rig/Hips/TailBase/TailBase Joint
+    m_Weight: 0
+  - m_Path: Rig/Hips/Sport Shorts
+    m_Weight: 0
+  - m_Path: Rig/Hips/Waistband
+    m_Weight: 0
+  - m_Path: Rig/Hips/Belt Tab
+    m_Weight: 0

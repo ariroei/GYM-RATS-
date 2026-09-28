@@ -1,0 +1,6 @@
+{
+    "name": "GymRats.CharacterAuthoring",
+    "rootNamespace": "GymRats.Editor",
+    "references": ["GymRats.Runtime"],
+    "includePlatforms": ["Editor"]
+}

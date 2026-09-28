@@ -10,12 +10,20 @@ Universal Render Pipeline **17.6.0**. Input System **1.20.0** is enabled.
 3. Press Play and focus the Game view. Move with WASD / arrow keys or the gamepad
    left stick. Jump with Space or the south face button (A / Cross).
 
-One temporary muscular rat is playable, with camera-relative movement, smooth
-turning, analog movement speed, jumping, gravity, and a third-person follow
-camera. Its large ears, long snout, incisors, pink paws, and long tail are built
-from temporary primitive meshes. Arms, legs, and tail have simple procedural
-motion. The rat returns to its starting position after falling off the arena.
-Combat, grabbing, multiplayer, and menus are not implemented.
+The teal-shirted rat is playable, with camera-relative movement, smooth turning,
+analog speed, jumping, gravity, a follow camera, and a basic punch. Walk toward
+the coral-shirted **Practice Rat**, face it, and press **Enter**, **left mouse**,
+or the gamepad **west face button (X / Square)**. Close punches cause a flash,
+animated recoil, knockback, and brief recovery. Punches outside the forward
+range or behind a solid wall miss. Holding Attack does not automatically repeat.
+The target has no AI or player input; it only moves when hit or falling.
+Both rats return to their own starting positions after falling off the arena.
+Grabbing, weapons, multiplayer, health/knockout rules, and menus are not implemented.
+
+The original stylized rat design uses an articulated **primitive-based prototype**,
+not a finished character mesh. A generic rig and Animator provide idle, run,
+jump, fall, landing, punch, and hit clips, plus blinking and tail motion.
+See `CHARACTER_ART.md` for the rig, authoring workflow, and remaining art work.
 
 The target is Windows 64-bit, with a 1920 x 1080 default resolution. The existing
 PC URP quality asset is retained and also assigned as the graphics fallback.
@@ -39,9 +47,9 @@ use generic controls for compatible controllers.
 | Sprint | Left Shift | Left stick press |
 | Pause | Escape | Start / Menu |
 
-Only Move and Jump are consumed by the movement prototype. The other existing
-bindings are reserved for later work. The motor owns its own copy of the input
-asset, leaving the project-wide UI actions independent. Keyboard and gamepad
+Move, Jump, and Attack are active. The other existing bindings are reserved for
+later work. Movement and combat own their input-action copies, leaving the
+project-wide UI actions independent. Keyboard and gamepad
 work without selecting a scheme; device pairing and multiplayer joining are
 future work. The camera follows automatically with a fixed world heading.
 
@@ -51,11 +59,20 @@ Select `Rat Player` in GymPrototype:
 
 - **Rat Motor:** move speed, acceleration, deceleration, turn speed, air control,
   jump height, gravity, terminal speed, coyote time, jump buffer, ground probe,
-  and fall recovery height.
+  fall recovery height, and knockback drag. **Accepts Player Input** is disabled
+  on Practice Rat so gravity and knockback still run without responding to controls.
 - **Character Controller:** capsule dimensions, slope limit, step offset, and
   skin width. Keep the player root at unit scale; resize the visual child rather
   than scaling the root.
-- **Rat Visual Motion:** stride frequency and angle.
+- **Rat Animator Driver:** locomotion speed damping and minimum airborne time
+  before a landing reaction. Root motion is disabled.
+- **Rat Combat:** range (chest to target collider surface), facing cone, punch
+  duration, cooldown, horizontal/upward knockback velocity, and hit recovery.
+  The selected-object gizmo shows the range and cone boundaries. Contact occurs
+  once, one third of the way through the punch; animation playback scales with
+  punch duration. Effective cooldown cannot be shorter than the punch duration.
+- **Rat Hit Receiver:** flash color and duration. Recovery briefly prevents new
+  hits and suppresses player movement/jump/punch input on a struck player.
 
 Select `Main Camera` to tune **Rat Follow Camera**: offset, look height,
 follow smoothing, teleport threshold, and obstruction radius/layers. The camera
@@ -71,15 +88,15 @@ assets are preserved.
 | Folder under Assets | Purpose |
 | --- | --- |
 | Scenes | Playable scenes and the original sample scene |
-| Scripts | Movement, camera, and procedural visual motion |
+| Scripts | Movement, camera, animation drivers, and combat |
 | Characters | RatPrototype prefab and future character assets |
-| Animations | Animation clips and controllers |
+| Animations/Rat | Generic Avatar, Animator Controller, upper-body mask, and seven clips |
 | Materials | Shared materials, including the prototype palette |
 | Prefabs | Reusable objects, including GymArena |
 | Audio | Music, sound effects, and mixers |
 | UI | Menus, HUD assets, and UI layouts |
 | Tests/Editor | Editor validation for the arena and input setup |
-| Tests/PlayMode | Movement, jumping, camera, and recovery integration tests |
+| Tests/PlayMode | Movement, animation, camera, combat, and recovery integration tests |
 
 ## Validation and workflow
 
@@ -88,6 +105,9 @@ Open Window > General > Test Runner, select EditMode, and run
 The checks cover scene setup, camera-relative movement, turning, stopping,
 analog gamepad input, jumping and landing, prevention of repeated airborne
 jumps, ceiling collision, camera tracking/obstruction, and falling/respawning.
+They also check locomotion/airborne animation transitions, face/tail motion,
+keyboard/gamepad punches, impact timing and arm motion, knockback and recovery,
+cooldown, out-of-range/behind-target misses, wall blocking, and movement while punching.
 Play Mode tests use isolated virtual devices and restore the real Input System
 afterward. These checks do not substitute for testing a physical gamepad or a
 built player. See `VALIDATION.md` for recorded results and limitations.

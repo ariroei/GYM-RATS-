@@ -34,9 +34,22 @@ namespace GymRats.Tests
                 Assert.That(cameras.Length, Is.EqualTo(1));
                 Assert.That(cameras[0].CompareTag("MainCamera"), Is.True);
                 cameras[0].aspect = 16f / 9f;
-                var rat = objects.Select(obj => obj.GetComponent<RatMotor>()).First(motor => motor != null);
+                var rat = objects.Select(obj => obj.GetComponent<RatMotor>()).First(motor => motor != null && motor.AcceptsPlayerInput);
                 Assert.That(rat.GetComponent<CharacterController>(), Is.Not.Null);
                 Assert.That(cameras[0].GetComponent<RatFollowCamera>().Target, Is.EqualTo(rat.transform));
+                var animator = rat.GetComponentInChildren<Animator>();
+                Assert.That(animator, Is.Not.Null);
+                Assert.That(animator.avatar.isValid && !animator.avatar.isHuman, Is.True);
+                Assert.That(animator.applyRootMotion, Is.False);
+                Assert.That(rat.GetComponent<RatAnimatorDriver>(), Is.Not.Null);
+                Assert.That(rat.GetComponent<RatVisualMotion>(), Is.Null);
+                Assert.That(animator.runtimeAnimatorController.animationClips.Length, Is.EqualTo(7));
+                foreach (var clip in animator.runtimeAnimatorController.animationClips)
+                {
+                    Assert.That(clip.length, Is.GreaterThan(0.2f));
+                    foreach (var binding in AnimationUtility.GetCurveBindings(clip))
+                        Assert.That(animator.transform.Find(binding.path), Is.Not.Null, clip.name + ": " + binding.path);
+                }
                 foreach (var height in new[] { 0.1f, 2.95f })
                 {
                     var point = cameras[0].WorldToViewportPoint(rat.transform.position + Vector3.up * height);

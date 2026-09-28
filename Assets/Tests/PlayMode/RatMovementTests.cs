@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -27,7 +29,7 @@ namespace GymRats.Tests
             keyboard = InputSystem.AddDevice<Keyboard>();
             gamepad = InputSystem.AddDevice<Gamepad>();
             yield return SceneManager.LoadSceneAsync("GymPrototype");
-            rat = Object.FindFirstObjectByType<RatMotor>();
+            rat = Object.FindObjectsByType<RatMotor>(FindObjectsSortMode.None).Single(motor => motor.AcceptsPlayerInput);
             camera = Camera.main;
             follow = camera.GetComponent<RatFollowCamera>();
             Assert.That(rat, Is.Not.Null);
@@ -46,6 +48,72 @@ namespace GymRats.Tests
             yield return null;
             input?.TearDown();
             input = null;
+        }
+
+        [UnityTest]
+        public IEnumerator AnimatorTransitionsThroughRunJumpFallLandAndIdle()
+        {
+            var animator = rat.GetComponentInChildren<Animator>();
+            Assert.That(animator.applyRootMotion, Is.False);
+            Assert.That(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"), Is.True);
+            Press(keyboard.wKey);
+            yield return new WaitForSeconds(0.3f);
+            Assert.That(animator.GetCurrentAnimatorStateInfo(0).IsName("Run"), Is.True);
+            var thigh = animator.transform.Find("Rig/Hips/ThighL");
+            Quaternion firstPose = thigh.localRotation;
+            yield return new WaitForSeconds(0.13f);
+            Assert.That(Quaternion.Angle(firstPose, thigh.localRotation), Is.GreaterThan(5f), "Run must move the rig, not just the Animator state.");
+            Release(keyboard.wKey);
+            float stopDeadline = Time.time + 0.7f;
+            while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") && Time.time < stopDeadline)
+                yield return null;
+            Assert.That(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"), Is.True,
+                "Deceleration, speed damping, and the stop blend must settle promptly.");
+            float baseline = rat.transform.position.y;
+            Press(keyboard.spaceKey);
+            var visited = new List<string>();
+            float until = Time.time + 1.7f;
+            while (Time.time < until)
+            {
+                var state = animator.GetCurrentAnimatorStateInfo(0);
+                foreach (string name in new[] { "Jump", "Fall", "Land", "Idle" })
+                    if (state.IsName(name) && !visited.Contains(name))
+                        visited.Add(name);
+                AssertRatVisible();
+                yield return null;
+            }
+            Release(keyboard.spaceKey);
+            // Ignore the initial Idle while the short takeoff blend begins.
+            if (visited.Count > 0 && visited[0] == "Idle") visited.RemoveAt(0);
+            Assert.That(visited, Does.Contain("Jump"));
+            Assert.That(visited, Does.Contain("Fall"));
+            Assert.That(visited, Does.Contain("Land"));
+            Assert.That(visited.IndexOf("Jump"), Is.LessThan(visited.IndexOf("Fall")));
+            Assert.That(visited.IndexOf("Fall"), Is.LessThan(visited.IndexOf("Land")));
+            Assert.That(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"), Is.True);
+            Assert.That(rat.transform.position.y, Is.EqualTo(baseline).Within(0.08f));
+        }
+
+        [UnityTest]
+        public IEnumerator IdleAnimatesFaceAndTailWithoutMovingThePlayer()
+        {
+            var animator = rat.GetComponentInChildren<Animator>();
+            var eye = animator.transform.Find("Rig/Hips/Spine/Chest/Neck/Head/EyeL");
+            var tail = animator.transform.Find("Rig/Hips/TailBase");
+            Quaternion initialTail = tail.localRotation;
+            Vector3 initialPosition = rat.transform.position;
+            float minimumEyeScale = 1f;
+            float maximumTailMotion = 0f;
+            float until = Time.time + 2.2f;
+            while (Time.time < until)
+            {
+                minimumEyeScale = Mathf.Min(minimumEyeScale, eye.localScale.y);
+                maximumTailMotion = Mathf.Max(maximumTailMotion, Quaternion.Angle(initialTail, tail.localRotation));
+                yield return null;
+            }
+            Assert.That(minimumEyeScale, Is.LessThan(0.5f), "Idle should visibly blink.");
+            Assert.That(maximumTailMotion, Is.GreaterThan(4f));
+            Assert.That(Vector3.Distance(initialPosition, rat.transform.position), Is.LessThan(0.03f));
         }
 
         [UnityTest]

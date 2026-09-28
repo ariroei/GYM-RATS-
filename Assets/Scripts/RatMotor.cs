@@ -12,6 +12,8 @@ namespace GymRats
         [SerializeField] private Transform visualRoot;
 
         [Header("Movement")]
+        [Tooltip("Disable for a stationary practice target; gravity and hit knockback remain active.")]
+        [SerializeField] private bool acceptsPlayerInput = true;
         [SerializeField, Min(0.1f)] private float moveSpeed = 6f;
         [SerializeField, Min(0.1f)] private float acceleration = 40f;
         [SerializeField, Min(0.1f)] private float deceleration = 55f;
@@ -30,6 +32,7 @@ namespace GymRats
         [Header("Recovery")]
         [Tooltip("Return to the starting position after falling below this world height.")]
         [SerializeField] private float respawnHeight = -8f;
+        [SerializeField, Min(0.1f)] private float knockbackDrag = 16f;
 
         private CharacterController controller;
         private InputActionAsset runtimeActions;
@@ -39,6 +42,8 @@ namespace GymRats
         private Vector3 spawnPosition;
         private Quaternion spawnRotation;
         private Vector3 planarVelocity;
+        private Vector3 knockbackVelocity;
+        private float recoveryUntil;
         private float verticalSpeed;
         private float lastGroundedTime = float.NegativeInfinity;
         private float lastJumpTime = float.NegativeInfinity;
@@ -47,6 +52,10 @@ namespace GymRats
         public Vector3 PlanarVelocity => planarVelocity;
         public float VerticalSpeed => verticalSpeed;
         public float MoveSpeed => moveSpeed;
+        public bool AcceptsPlayerInput => acceptsPlayerInput;
+        public bool IsRecovering => Time.time < recoveryUntil;
+        public Transform Facing => visualRoot != null ? visualRoot : transform;
+        public InputActionAsset InputActions => inputActions;
 
         private void Awake()
         {
@@ -59,6 +68,8 @@ namespace GymRats
 
         private void OnEnable()
         {
+            if (!acceptsPlayerInput)
+                return;
             if (inputActions == null)
             {
                 Debug.LogError("RatMotor requires an Input Action Asset.", this);
@@ -88,6 +99,8 @@ namespace GymRats
             moveAction = null;
             jumpAction = null;
             planarVelocity = Vector3.zero;
+            knockbackVelocity = Vector3.zero;
+            recoveryUntil = 0f;
             verticalSpeed = 0f;
             lastGroundedTime = lastJumpTime = float.NegativeInfinity;
             IsGrounded = false;
@@ -95,12 +108,14 @@ namespace GymRats
 
         private void QueueJump(InputAction.CallbackContext context)
         {
+            if (IsRecovering)
+                return;
             lastJumpTime = Time.time;
         }
 
         private void Update()
         {
-            if (!controller.enabled || moveAction == null)
+            if (!controller.enabled)
                 return;
             if (transform.position.y < respawnHeight)
             {
@@ -119,7 +134,8 @@ namespace GymRats
                 verticalSpeed = -2f;
             }
 
-            Vector2 input = Vector2.ClampMagnitude(moveAction.ReadValue<Vector2>(), 1f);
+            Vector2 input = !IsRecovering && moveAction != null
+                ? Vector2.ClampMagnitude(moveAction.ReadValue<Vector2>(), 1f) : Vector2.zero;
             Vector3 forward = movementCamera != null ? movementCamera.forward : Vector3.forward;
             forward = Vector3.ProjectOnPlane(forward, Vector3.up);
             if (forward.sqrMagnitude < 0.001f)
@@ -138,7 +154,7 @@ namespace GymRats
                     Quaternion.LookRotation(desiredVelocity, Vector3.up), turnSpeed * deltaTime);
             }
 
-            if (Time.time - lastJumpTime <= jumpBufferTime && Time.time - lastGroundedTime <= coyoteTime)
+            if (!IsRecovering && Time.time - lastJumpTime <= jumpBufferTime && Time.time - lastGroundedTime <= coyoteTime)
             {
                 verticalSpeed = Mathf.Sqrt(2f * gravity * jumpHeight);
                 lastJumpTime = lastGroundedTime = float.NegativeInfinity;
@@ -146,7 +162,8 @@ namespace GymRats
             }
 
             verticalSpeed = Mathf.Max(verticalSpeed - gravity * deltaTime, -terminalSpeed);
-            CollisionFlags flags = controller.Move((planarVelocity + Vector3.up * verticalSpeed) * deltaTime);
+            CollisionFlags flags = controller.Move((planarVelocity + knockbackVelocity + Vector3.up * verticalSpeed) * deltaTime);
+            knockbackVelocity = Vector3.MoveTowards(knockbackVelocity, Vector3.zero, knockbackDrag * deltaTime);
             if ((flags & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
                 verticalSpeed = 0f;
             if ((flags & CollisionFlags.Below) != 0 && verticalSpeed <= 0f)
@@ -178,6 +195,16 @@ namespace GymRats
             return false;
         }
 
+        public void ApplyKnockback(Vector3 velocity, float recoveryDuration)
+        {
+            knockbackVelocity = Vector3.ProjectOnPlane(velocity, Vector3.up);
+            verticalSpeed = Mathf.Max(verticalSpeed, velocity.y);
+            recoveryUntil = Time.time + Mathf.Max(0f, recoveryDuration);
+            planarVelocity = Vector3.zero;
+            lastJumpTime = lastGroundedTime = float.NegativeInfinity;
+            IsGrounded = false;
+        }
+
         private void Respawn()
         {
             controller.enabled = false;
@@ -186,6 +213,8 @@ namespace GymRats
                 visualRoot.rotation = spawnRotation;
             controller.enabled = true;
             planarVelocity = Vector3.zero;
+            knockbackVelocity = Vector3.zero;
+            recoveryUntil = 0f;
             verticalSpeed = 0f;
             lastGroundedTime = lastJumpTime = float.NegativeInfinity;
             IsGrounded = false;

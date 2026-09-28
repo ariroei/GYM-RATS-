@@ -1,5 +1,41 @@
 # GYM RATS validation
 
+## Character animation and first combat prototype - 2026-09-28
+
+Completed the interrupted character/Animator setup and added combat in the
+existing Unity 6000.6.3f1 project. The original player prefab GUID, input bindings,
+camera controls, and sample scene are preserved.
+
+- C# compilation completed without errors.
+- All **4 Edit Mode checks** passed, including the generic Avatar, seven clips,
+  valid animation paths, camera framing, materials, and existing input setup.
+- All **17 Play Mode checks passed across a suite run and a targeted rerun**:
+  the suite passed 16 tests; its stop-to-idle timing assertion was updated to
+  allow the actual deceleration/damping/blend to finish within 0.7 seconds, and
+  the complete locomotion/jump/fall/landing transition test then passed.
+- The **8 combat checks** verified keyboard and gamepad punching; actual upper-arm
+  animation before contact; delayed, single-hit impact; flash, recoil, knockback,
+  and recovery; cooldown and no automatic repeat when held; out-of-range misses;
+  behind-target misses; solid-wall blocking; movement/jumping/camera while punching;
+  and rejection of repeated hits during recovery.
+- Existing movement/jump/camera checks passed with both rats in the scene.
+  Additional checks verified Idle/Run/Jump/Fall/Land transitions and actual idle
+  blinking/tail motion. The target remained stationary under player movement input.
+- Normal Play Mode visual inspection confirmed both characters and a valid rig,
+  with no console errors or warnings. A paused impact capture showed the target's
+  hit flash. The practice target's coral material assignment was corrected after
+  the visual review. Play Mode was stopped and GymPrototype left open.
+- A Test Runner startup exception required clearing an interrupted job and
+  retrying. A material-block initialization/cleanup issue and an incorrect
+  upper-body mask path were fixed before the successful checks.
+- Git whitespace, asset metadata, and duplicate-GUID checks passed.
+
+Not tested: physical keyboard/gamepad feel and a new standalone player build.
+These are primitive-based, rigid-joint art assets, not a finished skinned character.
+Production mesh/skin weights, animation polish, and impact audio/VFX remain;
+see `CHARACTER_ART.md`. No grabbing, weapons, multiplayer, or knockout system
+was added.
+
 ## Playable movement prototype - 2026-09-28
 
 Validated in the existing Unity 6000.6.3f1 Editor with URP and Input System 1.20.0.
