@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 2185660779772634155}
   - component: {fileID: 7983286970393191602}
   - component: {fileID: 8943631175100953151}
+  - component: {fileID: 3887370630399932812}
   m_Layer: 0
   m_Name: MedicineBall
   m_TagString: Untagged
@@ -142,7 +143,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3276943475792871484}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 93eeada66eed9e84bae83392162974fe, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -244,3 +245,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c32fedc136289bc46a1f131bca821c68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GymRats.Runtime::GymRats.Grabbable
+--- !u!114 &3887370630399932812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3276943475792871484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1d784028bba9714ab9dfeb5fa242f95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GymRats.Runtime::GymRats.ThrownEquipment
+  launchMultiplier: 1
+  upwardLaunchMultiplier: 0.4
+  minimumHitSpeed: 2
+  knockbackPerSpeed: 0.6
+  maximumKnockback: 8
+  upwardKnockback: 2
+  recovery: 0.4
+  activeSeconds: 3

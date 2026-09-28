@@ -18,13 +18,14 @@ animated recoil, knockback, and brief recovery. Punches outside the forward
 range or behind a solid wall miss. Holding Attack does not automatically repeat.
 The target has no AI or player input; it moves when hit, carried, thrown, or falling.
 Both rats return to their own starting positions after falling off the arena.
-Walk up to a rat or the orange **Medicine Ball** and press **E / Y (Triangle)**
+Walk up to a rat, **Dumbbell**, orange **Medicine Ball**, or ribbed **Foam Roller** and press **E / Y (Triangle)**
 to grab. Press it again to release, or **R / right bumper (R1)** to throw in the
 facing direction. Move and jump while carrying; both hands are occupied, so
 punching resumes after release/throw recovery. Grab/release/throw have a short
 cooldown. A blocked carry path safely drops the target instead of pulling it
-through a wall. Hits on the holder also release the target. The ball resets after
-falling below the arena. Weapons, multiplayer, health/knockout rules, and menus
+through a wall. Hits on the holder also release the target. All three props reset after
+falling below the arena. Thrown equipment flashes and knocks back rats on impact;
+simply dropping or nudging an unthrown object does not attack. Weapons, multiplayer, health/knockout rules, and menus
 are not implemented.
 
 The original stylized rat design uses an articulated **primitive-based prototype**,
@@ -82,10 +83,11 @@ Select `Rat Player` in GymPrototype:
   punch duration. Effective cooldown cannot be shorter than the punch duration.
 - **Rat Grabber:** grab distance (chest to collider surface), facing cone, throw
   velocity, upward velocity, cooldown, and hold height/distance. `Grabbable`
-  supports the upright unit-scale rat capsule and the spherical medicine ball.
+  supports upright unit-scale rat capsules and compound box, sphere, or capsule
+  prop colliders, including their current rotation after tumbling.
   Held colliders are suspended and volume-swept against obstacles every frame;
-  release restores collisions. Rats use motor knockback; the ball uses a
-  Rigidbody velocity impulse with continuous collision detection.
+  release restores each collider's enabled state. Rats use motor knockback; props
+  use Rigidbody velocity impulses with continuous collision detection.
 - **Rat Hit Receiver:** flash color and duration. Recovery briefly prevents new
   hits and suppresses player movement/jump/punch input on a struck player.
 
@@ -94,6 +96,33 @@ follow smoothing, teleport threshold, and obstruction radius/layers. The camera
 pulls forward when geometry obstructs the view and snaps after large teleports.
 `Assets/Characters/RatPrototype.prefab` is the reusable character; a missing
 camera reference falls back to the scene's MainCamera at startup.
+
+## Interactive gym equipment
+
+The three original stylized props are **primitive-based placeholders**, with
+editable prefab geometry and physics under `Assets/Prefabs`. No external model
+or copied game design is used. The dumbbell has blocky teal rubber weights and
+orange caps; the orange ball has a dark grip band; the roller has teal ribs and
+orange end rims.
+
+| Prop | Mass | Collision | Throw speed multiplier | Physical character |
+| --- | --- | --- | --- | --- |
+| Dumbbell | 8 kg | Two end boxes and capsule grip | 0.72 | Heavy, grippy, low bounce, strong impact |
+| Medicine Ball | 4 kg | Sphere | 1.0 | Moderate bounce and rolling |
+| Foam Roller | 1.2 kg | Horizontal capsule | 1.15 | Light, rolling, gentle impact |
+
+Select a prop to tune Rigidbody mass/damping and its shared Physics Material's
+friction/bounce. **Thrown Equipment** exposes launch and upward-arc multipliers, minimum hit
+speed, knockback per speed, maximum knockback, upward impulse, recovery, and
+active lifetime. Mass controls ordinary object collisions; launch multiplier
+separately sets the arcade throw response to the player's common throw force.
+
+Only intentional throws arm impacts, for three seconds by default. A rat can be
+hit once per throw, the thrower is immune to its own throw, and rat recovery still
+rejects repeated hits. Pickup, release without throwing, disabling, and falling
+out of bounds disarm the prop. Sweep checks stop at the nearest solid collider;
+physics handles floor/wall bounce. Rat hits reuse the existing flash and recoil.
+There are no health/knockout rules, ragdolls, impact audio, or polished VFX yet.
 
 ## Asset organization
 
@@ -107,7 +136,7 @@ assets are preserved.
 | Characters | RatPrototype prefab and future character assets |
 | Animations/Rat | Generic Avatar, Animator Controller, upper-body mask, and eleven clips |
 | Materials | Shared materials, including the prototype palette |
-| Prefabs | Reusable objects, including GymArena and MedicineBall |
+| Prefabs | Reusable objects, including GymArena, MedicineBall, Dumbbell, and FoamRoller |
 | Audio | Music, sound effects, and mixers |
 | UI | Menus, HUD assets, and UI layouts |
 | Tests/Editor | Editor validation for the arena and input setup |

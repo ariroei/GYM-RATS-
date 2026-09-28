@@ -1,5 +1,40 @@
 # GYM RATS validation
 
+## Interactive gym equipment - 2026-09-28
+
+- Unity 6000.6.3f1 compiled the changes without script errors.
+- Final complete Play Mode suite: **29 passed, 0 failed** (70.35 seconds).
+  The five new equipment checks run in GymPrototype alongside all 24 existing
+  movement, animation, camera, combat, and grabbing checks.
+- Each of Dumbbell, Medicine Ball, and Foam Roller was dropped in a tilted pose,
+  picked up with keyboard controls, carried while moving, released, picked up
+  with gamepad controls, thrown into Practice Rat, and picked up again after
+  collision/landing or the existing off-arena respawn.
+- Rat impact checks observed one hit per throw, forward knockback, recovery,
+  material flash, and the Hit animation. The thrower did not hit itself.
+- Each prop was thrown into a solid test wall: none tunneled through it or hit
+  the rat behind it, and each remained grabbable after wall/floor contacts.
+  Unthrown moving props did not trigger combat hits. Collider restoration and
+  Rigidbody simulation were checked after release; compound dumbbell parts
+  and the rotated roller capsule use their actual primitive carry volumes.
+- Lowered the equipment's upward throw arc after the dumbbell initially sailed
+  above a nearby rat. Allowed lifting out of shallow initial floor penetration
+  while still rejecting blocked paths/destinations. Corrected virtual keyboard
+  event timing and allowed the fast roller's legitimate off-arena respawn in tests.
+- All **4 Edit Mode checks** passed (scene, rig, animation bindings, materials,
+  camera, input, and build scene configuration).
+- Visual Play Mode inspection confirmed three distinct recognizable props and
+  the preserved rat appearances. Runtime Console had no errors or warnings.
+  GymPrototype was left open outside Play Mode.
+- Asset metadata/duplicate-GUID and Git whitespace checks passed. Test Runner
+  reload/startup interruptions were retried before the final successful suite.
+
+Limitations: original primitive placeholder models and simple collision geometry;
+no hand IK, ragdolls, health/knockout rules, equipment audio, or polished impact
+VFX. Impact feedback reuses rat recoil and flash. Physical-device feel and a new
+standalone build were not tested; automated input uses virtual keyboard/gamepad.
+
+
 ## Grabbing and throwing prototype - 2026-09-28
 
 - Unity 6000.6.3f1 compiled the updated gameplay and test scripts without errors.

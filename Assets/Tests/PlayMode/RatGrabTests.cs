@@ -28,7 +28,7 @@ namespace GymRats.Tests
             var rats = Object.FindObjectsByType<RatMotor>();
             player = rats.Single(x => x.AcceptsPlayerInput); rat = rats.Single(x => !x.AcceptsPlayerInput);
             grabber = player.GetComponent<RatGrabber>();
-            ball = Object.FindObjectsByType<Grabbable>().Single(x => x.GetComponent<Rigidbody>() != null);
+            ball = Object.FindObjectsByType<Grabbable>().Single(x => x.name == "Medicine Ball");
             PlaceRat(new Vector3(0, 0.05f, 1.7f));
             player.Facing.rotation = Quaternion.identity;
             yield return new WaitForSeconds(0.2f);

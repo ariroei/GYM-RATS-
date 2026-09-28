@@ -42,7 +42,7 @@ prefab to avoid competing writes; its source is retained for reference.
   These are temporary rigid-joint poses. The carried target stays at a fixed chest/front
   attachment; there is no hand IK, target-specific contact alignment, or ragdoll.
   Thrown rats remain upright CharacterControllers with gravity and knockback;
-  the medicine ball is a physical Rigidbody. Throws do not cause impact damage.
+  the medicine ball is a physical Rigidbody. Thrown equipment now triggers rat hit reactions; thrown rats do not deal impact hits.
 
 ## Editing
 
@@ -62,3 +62,11 @@ No rebuilding is required to open or play the project.
   and hand-polished locomotion, attack, and reaction animation.
 - Dedicated punch/impact audio and polished impact VFX; the current hit flash and
   rigid-joint recoil are functional placeholders.
+
+## Gym equipment placeholders
+
+Medicine Ball, Dumbbell, and Foam Roller use original colored primitive geometry.
+The dumbbell uses compound end-weight/grip colliders; the roller uses a capsule
+without simulating individual grooves. These are recognizable playable blockouts,
+not final modeled/textured assets. Final bevels, optimized meshes, textures,
+contact-specific hand poses, and equipment impact audio/VFX remain.
