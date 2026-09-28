@@ -57,6 +57,8 @@ crashlytics-build.properties
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db*
 /[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers*
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+/[Aa]ssets/Resources/PerformanceTestRun*.json
+/[Aa]ssets/Resources/PerformanceTestRun*.json.meta
 /UIElementsSchema/
 /[Aa]ssets/[Ss]ceneDependencyCache*
 
