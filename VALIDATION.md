@@ -1,5 +1,35 @@
 # GYM RATS validation
 
+## Grabbing and throwing prototype - 2026-09-28
+
+- Unity 6000.6.3f1 compiled the updated gameplay and test scripts without errors.
+- Final complete Play Mode suite: **24 passed, 0 failed** (36.45 seconds).
+  All 7 new grab tests passed alongside 8 combat and 9 movement/animation/camera tests.
+- All **4 Edit Mode checks** passed, including the valid rig, eleven animation
+  clips/binding paths, scene, materials, camera, and input setup.
+- Tested keyboard rat grab/hold/release/throw, gamepad ball grab/release/throw,
+  facing-direction throws, carrying while moving/jumping, camera framing,
+  Grab/Hold/Release/Throw states, restored colliders and Rigidbody simulation,
+  rat landing/recovery, ball settling/re-grab, self/range/wall rejection,
+  exclusive ownership, cooldown, wall-obstructed carrying, holder hit/disable,
+  and punching again after release.
+- Fixed a carry assertion to sample after LateUpdate. Fixed an existing punch
+  assertion to allow its authored 35 ms Animator blend before checking Hit.
+  One Test Runner package startup exception was cleared and retried; the final
+  complete suite passed. No gameplay failures remain in these checks.
+- Normal Play Mode visual inspection confirmed rat and ball hold poses. The
+  runtime Console contained no errors or warnings. Restored the practice rat's
+  coral material overrides after regenerating the primitive rig. GymPrototype
+  is left open outside Play Mode.
+- Git whitespace and asset metadata/duplicate-GUID checks passed.
+
+Limitations: primitive geometry and temporary rigid-joint carry poses; no hand IK,
+ragdoll, throw-impact damage, or audio/VFX. Rats use their existing upright
+CharacterController knockback/gravity; the ball uses a Rigidbody impulse.
+Grabbable geometry is designed for these unit-scale upright rat capsules and
+spherical props. Physical-device feel and a new standalone build were not tested.
+
+
 ## Character animation and first combat prototype - 2026-09-28
 
 Completed the interrupted character/Animator setup and added combat in the

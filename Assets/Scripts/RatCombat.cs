@@ -86,7 +86,7 @@ namespace GymRats
 
         public bool TryPunch()
         {
-            if (!isActiveAndEnabled || !motor.AcceptsPlayerInput || motor.IsRecovering || IsPunching || Time.time < nextPunchTime)
+            if (!isActiveAndEnabled || !motor.AcceptsPlayerInput || motor.IsRecovering || motor.IsHeld || (GetComponent<RatGrabber>() != null && GetComponent<RatGrabber>().IsAnimating) || IsPunching || Time.time < nextPunchTime)
                 return false;
             punchStarted = Time.time;
             nextPunchTime = Time.time + Cooldown;
@@ -106,7 +106,7 @@ namespace GymRats
         private void Update()
         {
             if (!IsPunching) return;
-            if (motor.IsRecovering)
+            if (motor.IsRecovering || motor.IsHeld)
             {
                 IsPunching = pendingContact = false;
                 return;

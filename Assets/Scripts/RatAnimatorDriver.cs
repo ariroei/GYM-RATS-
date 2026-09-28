@@ -19,11 +19,15 @@ namespace GymRats
         private float airborneTime;
         private bool wasGrounded;
         private RatCombat combat;
+        private RatGrabber grabber;
+        private int carryLayer;
         private int combatLayer = -1;
 
         private void Awake()
         {
             combat = GetComponent<RatCombat>();
+            grabber = GetComponent<RatGrabber>();
+            carryLayer = animator != null ? animator.GetLayerIndex("Carry") : -1;
             if (animator != null) combatLayer = animator.GetLayerIndex("Combat");
         }
 
@@ -43,6 +47,12 @@ namespace GymRats
             if (motor == null || animator == null || !animator.isActiveAndEnabled)
                 return;
 
+            if (carryLayer >= 0)
+            {
+                animator.SetLayerWeight(carryLayer, Mathf.MoveTowards(animator.GetLayerWeight(carryLayer),
+                    grabber != null && grabber.IsAnimating && !motor.IsRecovering ? 1f : 0f, Time.deltaTime / 0.06f));
+                animator.SetBool("Holding", grabber != null && grabber.IsHolding);
+            }
             float speed = Mathf.Clamp01(motor.PlanarVelocity.magnitude / motor.MoveSpeed);
             animator.SetFloat(Speed, speed, speedDamping, Time.deltaTime);
             animator.SetFloat(StrideRate, Mathf.Lerp(0.6f, 1.25f, speed));

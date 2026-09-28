@@ -73,6 +73,7 @@ namespace GymRats.Editor
                 var controller = CreateController(idle, run, jump, fall, land);
                 AddCombatLayer(controller, CreateClip("Punch", 0.42f, false), CreateClip("Hit", 0.4f, false));
 
+                AddCarryLayer(controller);
                 var animator = visual.GetComponent<Animator>();
                 if (animator == null)
                     animator = visual.gameObject.AddComponent<Animator>();
@@ -91,6 +92,8 @@ namespace GymRats.Editor
                 serialized.FindProperty("motor").objectReferenceValue = root.GetComponent<RatMotor>();
                 serialized.FindProperty("animator").objectReferenceValue = animator;
                 serialized.ApplyModifiedPropertiesWithoutUndo();
+                if (root.GetComponent<Grabbable>() == null) root.AddComponent<Grabbable>();
+                if (root.GetComponent<RatGrabber>() == null) root.AddComponent<RatGrabber>();
                 if (root.GetComponent<RatCombat>() == null) root.AddComponent<RatCombat>();
                 if (root.GetComponent<RatHitReceiver>() == null) root.AddComponent<RatHitReceiver>();
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -248,6 +251,15 @@ namespace GymRats.Editor
             bool thigh = bone.StartsWith("Thigh");
             bool shin = bone.StartsWith("Shin");
             bool tail = bone.StartsWith("Tail");
+            if (state == "Grab" || state == "Hold" || state == "Release" || state == "Throw")
+            {
+                float lift = state == "Grab" ? Mathf.SmoothStep(0f, 1f, t) : state == "Release" ? 1f - t : 1f;
+                if (arm) return new Vector3((-95f + (state == "Throw" ? -55f * Mathf.Sin(t * Mathf.PI * 2f) : wave * 2f)) * lift, 0, side * 12f);
+                if (forearm) return new Vector3(-45f * lift, 0, 0);
+                if (bone == "Chest") return new Vector3(state == "Throw" ? -18f * Mathf.Sin(t * Mathf.PI * 2f) : -6f * lift, 0, 0);
+                if (bone == "Head") return new Vector3(-8f * lift, 0, 0);
+                return Vector3.zero;
+            }
             if (state == "Punch")
             {
                 float extension = t <= 1f / 3f ? Mathf.SmoothStep(0f, 1f, t * 3f)
@@ -446,6 +458,31 @@ namespace GymRats.Editor
                 name = "Combat", stateMachine = machine, avatarMask = mask,
                 blendingMode = AnimatorLayerBlendingMode.Override, defaultWeight = 0f
             });
+            EditorUtility.SetDirty(controller);
+        }
+
+        private static void AddCarryLayer(AnimatorController controller)
+        {
+            int existing = Array.FindIndex(controller.layers, layer => layer.name == "Carry");
+            if (existing >= 0) controller.RemoveLayer(existing);
+            controller.AddParameter("Holding", AnimatorControllerParameterType.Bool);
+            var machine = new AnimatorStateMachine { name = "Carry" };
+            AssetDatabase.AddObjectToAsset(machine, controller);
+            var ready = machine.AddState("Ready");
+            var hold = machine.AddState("Hold"); hold.motion = CreateClip("Hold", 1f, true);
+            machine.defaultState = ready;
+            foreach (string name in new[] { "Grab", "Release", "Throw" })
+            {
+                var state = machine.AddState(name); state.motion = CreateClip(name, name == "Grab" ? 0.25f : 0.4f, false);
+                var finish = Transition(state.AddTransition(name == "Grab" ? hold : ready), 0.05f);
+                finish.hasExitTime = true; finish.exitTime = 1f;
+            }
+            var stop = Transition(hold.AddTransition(ready), 0.05f);
+            stop.AddCondition(AnimatorConditionMode.IfNot, 0, "Holding");
+            foreach (var state in machine.states) state.state.writeDefaultValues = false;
+            controller.AddLayer(new AnimatorControllerLayer { name = "Carry", stateMachine = machine,
+                avatarMask = AssetDatabase.LoadAssetAtPath<AvatarMask>(Output + "/RatUpperBody.mask"),
+                blendingMode = AnimatorLayerBlendingMode.Override, defaultWeight = 0f });
             EditorUtility.SetDirty(controller);
         }
 

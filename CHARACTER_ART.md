@@ -38,6 +38,12 @@ Primitive geometry is rigidly parented to joints; there are no skin weights.
 receiver triggers Hit. The prior `RatVisualMotion` component is removed from the
 prefab to avoid competing writes; its source is retained for reference.
 
+- **Carry:** masked upper-body Grab, Hold, Release, and Throw states over locomotion.
+  These are temporary rigid-joint poses. The carried target stays at a fixed chest/front
+  attachment; there is no hand IK, target-specific contact alignment, or ragdoll.
+  Thrown rats remain upright CharacterControllers with gravity and knockback;
+  the medicine ball is a physical Rigidbody. Throws do not cause impact damage.
+
 ## Editing
 
 The editable `.anim`, `.controller`, `.mask`, Avatar, materials, and prefab are

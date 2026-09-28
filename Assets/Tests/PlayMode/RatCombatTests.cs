@@ -56,24 +56,28 @@ namespace GymRats.Tests
             Vector3 before = target.transform.position;
             input.Press(keyboard.enterKey);
             yield return new WaitForSeconds(0.09f);
-            Assert.That(combat.IsPunching, Is.True);
+            Assert.That(combat.IsPunching, Is.True, "Punch is active during windup.");
             Assert.That(receiver.ReceivedHitCount, Is.Zero, "Contact must wait for the extending fist.");
             Assert.That(Quaternion.Angle(rest, arm.localRotation), Is.GreaterThan(12f), "The upper-body mask must actually animate the arm.");
             yield return new WaitForSeconds(0.11f);
             Assert.That(receiver.ReceivedHitCount, Is.EqualTo(1));
             Assert.That(combat.SuccessfulHits, Is.EqualTo(1));
-            Assert.That(target.IsRecovering, Is.True);
+            Assert.That(target.IsRecovering, Is.True, "Target recovers after impact.");
             Assert.That(target.transform.position.z, Is.GreaterThan(before.z + 0.1f));
             var block = new MaterialPropertyBlock();
             target.GetComponentInChildren<Renderer>().GetPropertyBlock(block);
             Assert.That(block.isEmpty, Is.False, "A hit should flash the target's materials.");
             var targetAnimator = target.GetComponentInChildren<Animator>();
-            Assert.That(targetAnimator.GetCurrentAnimatorStateInfo(targetAnimator.GetLayerIndex("Combat")).IsName("Hit"), Is.True);
+            // Coroutine assertions can run before Animator evaluation; allow the authored 35 ms blend.
+            float hitDeadline = Time.time + 0.1f;
+            while (!targetAnimator.GetCurrentAnimatorStateInfo(targetAnimator.GetLayerIndex("Combat")).IsName("Hit") && Time.time < hitDeadline)
+                yield return null;
+            Assert.That(targetAnimator.GetCurrentAnimatorStateInfo(targetAnimator.GetLayerIndex("Combat")).IsName("Hit"), Is.True, "Target Animator enters Hit.");
             Assert.That(combat.TryPunch(), Is.False, "Cooldown must reject another punch.");
             yield return new WaitForSeconds(0.8f);
             Assert.That(receiver.ReceivedHitCount, Is.EqualTo(1));
             Assert.That(target.IsRecovering, Is.False);
-            Assert.That(target.IsGrounded, Is.True);
+            Assert.That(target.IsGrounded, Is.True, "Target lands after knockback.");
             Vector3 stopped = target.transform.position;
             input.Press(keyboard.dKey);
             yield return new WaitForSeconds(0.3f);

@@ -43,7 +43,7 @@ namespace GymRats.Tests
                 Assert.That(animator.applyRootMotion, Is.False);
                 Assert.That(rat.GetComponent<RatAnimatorDriver>(), Is.Not.Null);
                 Assert.That(rat.GetComponent<RatVisualMotion>(), Is.Null);
-                Assert.That(animator.runtimeAnimatorController.animationClips.Length, Is.EqualTo(7));
+                Assert.That(animator.runtimeAnimatorController.animationClips.Length, Is.EqualTo(11));
                 foreach (var clip in animator.runtimeAnimatorController.animationClips)
                 {
                     Assert.That(clip.length, Is.GreaterThan(0.2f));

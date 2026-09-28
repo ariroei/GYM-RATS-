@@ -34,6 +34,7 @@ namespace GymRats
         [SerializeField] private float respawnHeight = -8f;
         [SerializeField, Min(0.1f)] private float knockbackDrag = 16f;
 
+        private Grabbable grabbable;
         private CharacterController controller;
         private InputActionAsset runtimeActions;
         private InputAction moveAction;
@@ -48,6 +49,7 @@ namespace GymRats
         private float lastGroundedTime = float.NegativeInfinity;
         private float lastJumpTime = float.NegativeInfinity;
 
+        public bool IsHeld => grabbable != null && grabbable.IsHeld;
         public bool IsGrounded { get; private set; }
         public Vector3 PlanarVelocity => planarVelocity;
         public float VerticalSpeed => verticalSpeed;
@@ -59,6 +61,7 @@ namespace GymRats
 
         private void Awake()
         {
+            grabbable = GetComponent<Grabbable>();
             controller = GetComponent<CharacterController>();
             spawnPosition = transform.position;
             spawnRotation = visualRoot != null ? visualRoot.rotation : transform.rotation;
@@ -108,7 +111,7 @@ namespace GymRats
 
         private void QueueJump(InputAction.CallbackContext context)
         {
-            if (IsRecovering)
+            if (IsRecovering || IsHeld)
                 return;
             lastJumpTime = Time.time;
         }

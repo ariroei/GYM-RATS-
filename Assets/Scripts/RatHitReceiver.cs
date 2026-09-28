@@ -39,7 +39,7 @@ namespace GymRats
 
         public bool ReceiveHit(Vector3 velocity, float recoveryDuration)
         {
-            if (!isActiveAndEnabled || motor.IsRecovering) return false;
+            if (!isActiveAndEnabled || motor.IsRecovering || motor.IsHeld) return false;
             ReceivedHitCount++;
             motor.ApplyKnockback(velocity, recoveryDuration);
             if (animator != null)
