@@ -61,7 +61,8 @@ namespace GymRats
                 enabled = false;
                 return;
             }
-            runtimeActions = Instantiate(motor.InputActions);
+            var owner = GetComponent<RatInputOwner>();
+            runtimeActions = owner != null ? owner.CreateActions(motor.InputActions) : Instantiate(motor.InputActions);
             attackAction = runtimeActions.FindAction("Player/Attack", true);
             attackAction.performed += AttackPerformed;
             attackAction.Enable();

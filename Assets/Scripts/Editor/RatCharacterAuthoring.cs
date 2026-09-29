@@ -92,6 +92,7 @@ namespace GymRats.Editor
                 serialized.FindProperty("motor").objectReferenceValue = root.GetComponent<RatMotor>();
                 serialized.FindProperty("animator").objectReferenceValue = animator;
                 serialized.ApplyModifiedPropertiesWithoutUndo();
+                if (root.GetComponent<RatInputOwner>() == null) root.AddComponent<RatInputOwner>();
                 if (root.GetComponent<Grabbable>() == null) root.AddComponent<Grabbable>();
                 if (root.GetComponent<RatGrabber>() == null) root.AddComponent<RatGrabber>();
                 if (root.GetComponent<RatCombat>() == null) root.AddComponent<RatCombat>();

@@ -81,7 +81,8 @@ namespace GymRats
             }
 
             // Own a copy so disabling this character never disables project-wide UI input.
-            runtimeActions = Instantiate(inputActions);
+            var owner = GetComponent<RatInputOwner>();
+            runtimeActions = owner != null ? owner.CreateActions(inputActions) : Instantiate(inputActions);
             moveAction = runtimeActions.FindAction("Player/Move", true);
             jumpAction = runtimeActions.FindAction("Player/Jump", true);
             jumpAction.performed += QueueJump;
@@ -208,7 +209,7 @@ namespace GymRats
             IsGrounded = false;
         }
 
-        private void Respawn()
+        public void Respawn()
         {
             controller.enabled = false;
             transform.position = spawnPosition;

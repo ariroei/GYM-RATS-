@@ -116,6 +116,13 @@ namespace GymRats
         private void Update()
         {
             if (body == null || IsHeld || transform.position.y >= -8f) return;
+            ResetToSpawn();
+        }
+
+        public void ResetToSpawn()
+        {
+            if (Holder != null) Holder.ReleaseHeld(false);
+            if (body == null) return;
             if (equipment != null) equipment.Disarm();
             body.linearVelocity = body.angularVelocity = Vector3.zero;
             body.position = spawnPosition;

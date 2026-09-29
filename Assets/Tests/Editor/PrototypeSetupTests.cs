@@ -34,8 +34,11 @@ namespace GymRats.Tests
                 Assert.That(cameras.Length, Is.EqualTo(1));
                 Assert.That(cameras[0].CompareTag("MainCamera"), Is.True);
                 cameras[0].aspect = 16f / 9f;
-                var rat = objects.Select(obj => obj.GetComponent<RatMotor>()).First(motor => motor != null && motor.AcceptsPlayerInput);
+                var rat = objects.Select(obj => obj.GetComponent<RatMotor>()).First(motor => motor != null && motor.GetComponent<RatInputOwner>().PlayerNumber == 1);
                 Assert.That(rat.GetComponent<CharacterController>(), Is.Not.Null);
+                Assert.That(objects.Count(obj => obj.GetComponent<RatMotor>() != null && obj.GetComponent<RatMotor>().AcceptsPlayerInput), Is.EqualTo(2));
+                Assert.That(objects.Count(obj => obj.GetComponent<LocalMultiplayerSession>() != null), Is.EqualTo(1));
+                Assert.That(cameras[0].GetComponent<RatSharedCamera>().enabled, Is.True);
                 Assert.That(cameras[0].GetComponent<RatFollowCamera>().Target, Is.EqualTo(rat.transform));
                 var animator = rat.GetComponentInChildren<Animator>();
                 Assert.That(animator, Is.Not.Null);
@@ -104,7 +107,7 @@ namespace GymRats.Tests
                 actions.bindingMask = InputBinding.MaskByGroup(scheme.bindingGroup);
                 var player = actions.FindActionMap("Player", true);
                 player.Enable();
-                foreach (var name in new[] { "Move", "Attack", "Jump", "Interact", "Pause" })
+                foreach (var name in new[] { "Move", "Attack", "Jump", "Grab", "Throw", "Interact", "Pause" })
                 {
                     var action = player.FindAction(name, true);
                     Assert.That(action.controls.Count, Is.GreaterThan(0), name);

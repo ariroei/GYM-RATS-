@@ -7,26 +7,31 @@ Universal Render Pipeline **17.6.0**. Input System **1.20.0** is enabled.
 
 1. Add this repository folder in Unity Hub and open it with the recorded Editor version.
 2. Open `Assets/Scenes/GymPrototype.unity` and select a 16:9 Game view.
-3. Press Play and focus the Game view. Move with WASD / arrow keys or the gamepad
-   left stick. Jump with Space or the south face button (A / Cross).
+3. Connect one gamepad for keyboard + gamepad, or two gamepads, then press Play.
+   Focus the Game view. The panel shows each player's device and lets you switch layouts.
 
-The teal-shirted rat is playable, with camera-relative movement, smooth turning,
-analog speed, jumping, gravity, a follow camera, and a basic punch. Walk toward
-the coral-shirted **Practice Rat**, face it, and press **Enter**, **left mouse**,
-or the gamepad **west face button (X / Square)**. Close punches cause a flash,
-animated recoil, knockback, and brief recovery. Punches outside the forward
-range or behind a solid wall miss. Holding Attack does not automatically repeat.
-The target has no AI or player input; it moves when hit, carried, thrown, or falling.
-Both rats return to their own starting positions after falling off the arena.
-Walk up to a rat, **Dumbbell**, orange **Medicine Ball**, or ribbed **Foam Roller** and press **E / Y (Triangle)**
-to grab. Press it again to release, or **R / right bumper (R1)** to throw in the
-facing direction. Move and jump while carrying; both hands are occupied, so
-punching resumes after release/throw recovery. Grab/release/throw have a short
-cooldown. A blocked carry path safely drops the target instead of pulling it
-through a wall. Hits on the holder also release the target. All three props reset after
-falling below the arena. Thrown equipment flashes and knocks back rats on impact;
-simply dropping or nudging an unthrown object does not attack. Weapons, multiplayer, health/knockout rules, and menus
-are not implemented.
+Two rats start at separate safe positions: **P1 teal** and **P2 orange**, with
+colored floor markers and overhead labels. With one gamepad, P1 owns the keyboard
+and P2 owns the gamepad. With two connected gamepads at startup, P1 owns the first
+and P2 the second. Each rat's movement, jump, punch, grab, release, and throw actions
+are filtered to its assigned device. A missing device leaves that player idle.
+Reconnecting fills an empty slot without taking the other player's device.
+The selected layout remains stable when devices are connected during play; use
+the panel to switch from keyboard + gamepad to two gamepads.
+
+Face the other rat and punch for animated recoil, a flash, knockback, and brief
+recovery. Close forward punches connect; distant or wall-blocked punches miss.
+Grab either rat or the Dumbbell, Medicine Ball, or Foam Roller. Grab again to
+release, or throw in the direction you face. You can move and jump while carrying;
+punching resumes after release/throw recovery. Blocked carry paths and hits on
+the holder release the target. Intentional equipment throws knock back rats;
+dropped or nudged props do not attack. No online networking, weapons, health,
+knockout rules, or ragdolls are implemented.
+
+The elevated shared camera follows both rats and carried targets. It immediately
+zooms out as they separate and eases in when they regroup, preserving a fixed
+world heading for movement. Arena walls limit separation; there is no split screen
+or artificial player tether. Characters become smaller at opposite corners.
 
 The original stylized rat design uses an articulated **primitive-based prototype**,
 not a finished character mesh. A generic rig and Animator provide idle, run,
@@ -45,10 +50,10 @@ Existing Player and UI actions and their identifiers are preserved. The
 Keyboard&Mouse scheme now accepts a keyboard without a mouse. Gamepad bindings
 use generic controls for compatible controllers.
 
-| Player action | Keyboard / mouse | Gamepad |
+| Player action | Keyboard (P1 in keyboard layout) | Assigned gamepad |
 | --- | --- | --- |
 | Move | WASD or arrow keys | Left stick |
-| Attack | Enter or left mouse button | West face button (X / Square) |
+| Attack | Enter | West face button (X / Square) |
 | Jump | Space | South face button (A / Cross) |
 | Grab / release | E | North face button (Y / Triangle) |
 | Throw | R | Right shoulder (RB / R1) |
@@ -57,11 +62,11 @@ use generic controls for compatible controllers.
 | Sprint | Left Shift | Left stick press |
 | Pause | Escape | Start / Menu |
 
-Move, Jump, Attack, Grab, and Throw are active. The other existing bindings are reserved for
-later work. Movement and combat own their input-action copies, leaving the
-project-wide UI actions independent. Keyboard and gamepad
-work without selecting a scheme; device pairing and multiplayer joining are
-future work. The camera follows automatically with a fixed world heading.
+Move, Jump, Attack, Grab, and Throw are active. Other bindings are reserved.
+RatInputOwner filters all per-character action copies to the same assigned device;
+LocalMultiplayerSession exclusively assigns devices. Mouse attack is retained in
+the source input asset for compatibility but the multiplayer keyboard slot does
+not own the mouse. Use Enter to punch. Mouse clicks operate the layout panel.
 
 ## Tune the prototype
 
@@ -69,8 +74,8 @@ Select `Rat Player` in GymPrototype:
 
 - **Rat Motor:** move speed, acceleration, deceleration, turn speed, air control,
   jump height, gravity, terminal speed, coyote time, jump buffer, ground probe,
-  fall recovery height, and knockback drag. **Accepts Player Input** is disabled
-  on Practice Rat so gravity and knockback still run without responding to controls.
+  fall recovery height, and knockback drag. Both scene rats accept player input;
+  their Rat Input Owner determines which device can control them.
 - **Character Controller:** capsule dimensions, slope limit, step offset, and
   skin width. Keep the player root at unit scale; resize the visual child rather
   than scaling the root.
@@ -91,11 +96,30 @@ Select `Rat Player` in GymPrototype:
 - **Rat Hit Receiver:** flash color and duration. Recovery briefly prevents new
   hits and suppresses player movement/jump/punch input on a struck player.
 
-Select `Main Camera` to tune **Rat Follow Camera**: offset, look height,
-follow smoothing, teleport threshold, and obstruction radius/layers. The camera
-pulls forward when geometry obstructs the view and snaps after large teleports.
-`Assets/Characters/RatPrototype.prefab` is the reusable character; a missing
-camera reference falls back to the scene's MainCamera at startup.
+Select Main Camera to tune **Rat Shared Camera**: pitch, minimum distance,
+viewport margin, and smoothing. The previous single-player follow component is
+retained but disabled. Select Local Multiplayer Session to set the initial layout,
+and either rat's Rat Player Indicator to adjust its label color.
+Assets/Characters/RatPrototype.prefab remains the reusable character. Its input
+owner starts unassigned; a session must bind a device before it responds.
+
+## Gym arena
+
+The original 26 x 24 gym has a central teal fighting mat, orange strength zone,
+purple mobility zone, coral rear training bay, low padded cover benches, lockers,
+training bags, a rack, water cooler, wall lights, and GYM RATS lettering. Props are
+reachable in the side zones. Tall equipment sits against the rear wall; low front
+walls keep the shared camera readable. Four safe spawn markers include the two
+active player starts.
+
+Invisible physical perimeter walls and a ceiling keep rats and props inside even
+when thrown over the decorative cutaway walls. GymArenaLayout provides an extra
+out-of-bounds reset, safely releasing held targets first. Reusable GymArena,
+PaddedCoverBench, and StrengthRack prefabs use shared URP materials. Arena static
+visuals are combined by material (20 environment renderers, 16 colliders in this
+layout); this is an optimization, not a measured frame-rate guarantee.
+GymArenaAuthoring regenerates the original primitive blockout and baked meshes.
+These are recognizable prototype assets, not final environment art.
 
 ## Interactive gym equipment
 

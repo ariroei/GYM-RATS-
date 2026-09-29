@@ -42,7 +42,8 @@ namespace GymRats
         private void OnEnable()
         {
             if (!motor.AcceptsPlayerInput || motor.InputActions == null) return;
-            actions = Instantiate(motor.InputActions);
+            var owner = GetComponent<RatInputOwner>();
+            actions = owner != null ? owner.CreateActions(motor.InputActions) : Instantiate(motor.InputActions);
             grabAction = actions.FindAction("Player/Grab", true);
             throwAction = actions.FindAction("Player/Throw", true);
             grabAction.performed += OnGrab;

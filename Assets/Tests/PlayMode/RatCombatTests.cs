@@ -27,9 +27,10 @@ namespace GymRats.Tests
             keyboard = InputSystem.AddDevice<Keyboard>();
             gamepad = InputSystem.AddDevice<Gamepad>();
             yield return SceneManager.LoadSceneAsync("GymPrototype");
+            SoloGameplayFixture.Configure();
             var rats = Object.FindObjectsByType<RatMotor>(FindObjectsSortMode.None);
-            player = rats.Single(rat => rat.AcceptsPlayerInput);
-            target = rats.Single(rat => !rat.AcceptsPlayerInput);
+            player = rats.Single(rat => rat.GetComponent<RatInputOwner>().PlayerNumber == 1);
+            target = rats.Single(rat => rat.GetComponent<RatInputOwner>().PlayerNumber == 2);
             combat = player.GetComponent<RatCombat>();
             receiver = target.GetComponent<RatHitReceiver>();
             PositionTarget(1.6f);

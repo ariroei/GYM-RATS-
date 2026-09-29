@@ -1,5 +1,58 @@
 # GYM RATS validation
 
+## Local multiplayer and completed gym arena - 2026-09-29
+
+- Preserved and completed the pending arena work alongside two-player local play.
+  Unity remains 6000.6.3f1 with the existing URP and Input System versions.
+- The complete 42-check Play Mode run passed 41 checks; the roller pickup check
+  described below failed. After adjusting that test approach, the targeted five-check
+  equipment suite passed. All seven multiplayer checks passed in the complete run.
+  A final full rerun after the native-device availability check was added was paused
+  and then reported "Cancelled by user" in the Editor; it is not claimed as a pass.
+  That last device-availability change was verified live with the native keyboard.
+- Seven multiplayer integration checks cover keyboard/gamepad isolation, two-pad
+  isolation, automatic two-pad assignment, separate prop handling, both rats
+  punching/grabbing/releasing/throwing one another, disconnect/reconnect for either
+  player, and shared-camera framing at opposite corners, while jumping, and on regroup.
+- Six arena checks cover four clear spawn markers, zone/cover camera visibility,
+  movement around the fighting mat and jumping over cover, pickup from authored prop
+  positions, fast throws and knockback at the perimeter, and out-of-bounds recovery.
+- Retained movement, animation, combat, grabbing, and equipment regression tests.
+  Legacy single-player fixtures explicitly assign both virtual device types only
+  to P1; multiplayer tests use the unmodified two-player scene and exclusive ownership.
+- Fixed P1 disconnect taking P2's controller by reserving surviving assignments
+  before filling empty slots. A periodic check also handles native keyboard
+  availability after Editor focus changes at startup.
+- An initial equipment check failed when trying to lift a roller vertically against
+  the rear wall. Its approach now pulls the object away from the wall while lifting;
+  all five equipment checks passed on the targeted rerun. Collision restrictions
+  remain intact rather than allowing a blocked carry path.
+- All four Edit Mode checks passed: scene/rig/material integrity, two active input
+  owners and shared camera, keyboard/gamepad bindings, and build-scene configuration.
+- Play Mode screenshots inspected at the initial spawns and opposite arena corners:
+  both rats, contrasting markers, labels, props, and training zones are visible.
+  Shared-camera zoom maintains both rats in view; distant rats naturally appear smaller.
+  Live Console inspection returned no errors or warnings. The final label rendering
+  explicitly uses a dark background and light text instead of Editor skin colors.
+- Asset metadata review found no duplicate GUIDs or missing asset metadata (the
+  existing ignored .gitkeep sentinels do not require Unity metadata).
+
+### Remaining verification and limitations
+
+Only a native keyboard and mouse are connected. Automated input tests use Unity's
+virtual keyboard/gamepads; physical controller mappings, simultaneous human play,
+hot-unplug/replug behavior on real hardware, and a standalone Windows build still
+need testing. Open GymPrototype, connect one or two gamepads, press Play, and focus
+the Game view. Confirm the device panel and both players' full controls, then try
+opposite corners, carrying near walls, and mutual punches/throws. The layout buttons
+switch between keyboard + gamepad and two gamepads; P2 waits when no pad is present.
+
+The rat, props, and arena use original primitive prototype art. No final skinned
+character, polished environmental assets, audio, impact VFX, online networking,
+health/knockout rules, or runtime join/leave spawning is included. Two scene-authored
+rats occupy safe spawn positions. Static environment geometry is combined by
+material (20 renderers / 16 colliders); no performance benchmark or build was run.
+
 ## Interactive gym equipment - 2026-09-28
 
 - Unity 6000.6.3f1 compiled the changes without script errors.

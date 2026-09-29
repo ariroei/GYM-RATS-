@@ -25,8 +25,9 @@ namespace GymRats.Tests
             input = new InputTestFixture(); input.Setup();
             keyboard = InputSystem.AddDevice<Keyboard>(); gamepad = InputSystem.AddDevice<Gamepad>();
             yield return SceneManager.LoadSceneAsync("GymPrototype");
+            SoloGameplayFixture.Configure();
             var rats = Object.FindObjectsByType<RatMotor>();
-            player = rats.Single(x => x.AcceptsPlayerInput); rat = rats.Single(x => !x.AcceptsPlayerInput);
+            player = rats.Single(x => x.GetComponent<RatInputOwner>().PlayerNumber == 1); rat = rats.Single(x => x.GetComponent<RatInputOwner>().PlayerNumber == 2);
             grabber = player.GetComponent<RatGrabber>();
             ball = Object.FindObjectsByType<Grabbable>().Single(x => x.name == "Medicine Ball");
             PlaceRat(new Vector3(0, 0.05f, 1.7f));
@@ -88,8 +89,9 @@ namespace GymRats.Tests
         [UnityTest]
         public IEnumerator GamepadCarriesAndThrowsBallInNewFacingDirection()
         {
-            PlaceRat(new Vector3(6, 0.05f, 4));
+            PlaceRat(new Vector3(8, 0.05f, 8));
             var body = ball.GetComponent<Rigidbody>(); body.position = new Vector3(0, 0.5f, 1.4f);
+            body.transform.position = body.position;
             Physics.SyncTransforms();
             input.Press(gamepad.buttonNorth);
             yield return new WaitForSeconds(0.5f);
@@ -116,8 +118,9 @@ namespace GymRats.Tests
         [UnityTest]
         public IEnumerator BallReleaseSettlesAndCanBeGrabbedAgain()
         {
-            PlaceRat(new Vector3(6, 0.05f, 4));
+            PlaceRat(new Vector3(8, 0.05f, 8));
             var body = ball.GetComponent<Rigidbody>(); body.position = new Vector3(0, 0.5f, 1.4f);
+            body.transform.position = body.position;
             Physics.SyncTransforms();
             Assert.That(grabber.TryGrab(), Is.True);
             yield return new WaitForSeconds(0.5f);

@@ -29,7 +29,8 @@ namespace GymRats.Tests
             keyboard = InputSystem.AddDevice<Keyboard>();
             gamepad = InputSystem.AddDevice<Gamepad>();
             yield return SceneManager.LoadSceneAsync("GymPrototype");
-            rat = Object.FindObjectsByType<RatMotor>(FindObjectsSortMode.None).Single(motor => motor.AcceptsPlayerInput);
+            SoloGameplayFixture.Configure();
+            rat = Object.FindObjectsByType<RatMotor>(FindObjectsSortMode.None).Single(motor => motor.GetComponent<RatInputOwner>().PlayerNumber == 1);
             camera = Camera.main;
             follow = camera.GetComponent<RatFollowCamera>();
             Assert.That(rat, Is.Not.Null);
@@ -224,26 +225,22 @@ namespace GymRats.Tests
         }
 
         [UnityTest]
-        public IEnumerator WalkingOffArenaFallsAndRespawns()
+        public IEnumerator PerimeterStopsWalkingAndJumpingWithoutARespawn()
         {
             Press(keyboard.dKey);
-            bool fell = false;
-            bool recovered = false;
-            float until = Time.time + 5f;
+            float until = Time.time + 3f;
             while (Time.time < until)
             {
-                fell |= rat.transform.position.y < -2f;
-                if (fell && Mathf.Abs(rat.transform.position.x) < 0.5f && rat.transform.position.y > -0.1f)
-                {
-                    recovered = true;
-                    break;
-                }
+                Assert.That(rat.transform.position.x, Is.LessThan(12.5f));
+                Assert.That(rat.transform.position.y, Is.GreaterThan(-0.1f));
                 yield return null;
             }
-            Release(keyboard.dKey);
-            Assert.That(fell, Is.True);
-            Assert.That(recovered, Is.True);
-            yield return new WaitForSeconds(0.4f);
+            Assert.That(rat.transform.position.x, Is.GreaterThan(11.5f));
+            Press(keyboard.spaceKey);
+            yield return new WaitForSeconds(1.2f);
+            Release(keyboard.dKey); Release(keyboard.spaceKey);
+            Assert.That(rat.transform.position.x, Is.LessThan(12.5f));
+            Assert.That(Object.FindFirstObjectByType<GymArenaLayout>().RecoveryCount, Is.Zero);
             Assert.That(rat.IsGrounded, Is.True);
             AssertRatVisible();
         }

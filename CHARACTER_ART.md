@@ -70,3 +70,12 @@ The dumbbell uses compound end-weight/grip colliders; the roller uses a capsule
 without simulating individual grooves. These are recognizable playable blockouts,
 not final modeled/textured assets. Final bevels, optimized meshes, textures,
 contact-specific hand poses, and equipment impact audio/VFX remain.
+
+## Arena and local multiplayer additions
+
+The gym's mats, cutaway walls, cover benches, lockers, rack, training bags,
+water cooler, and pixel lettering are original primitive blockout art.
+GymArenaAuthoring preserves editable authoring code and bakes static visuals by
+material into reusable prefabs. Final modeled environment assets, textures,
+audio, and impact VFX remain future work. Two copies of the existing articulated
+rat use teal/orange indicators and P1/P2 labels; neither is a finished skinned mesh.

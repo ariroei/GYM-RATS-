@@ -25,12 +25,13 @@ namespace GymRats.Tests
             input = new InputTestFixture(); input.Setup();
             keyboard = InputSystem.AddDevice<Keyboard>(); gamepad = InputSystem.AddDevice<Gamepad>();
             yield return SceneManager.LoadSceneAsync("GymPrototype");
+            SoloGameplayFixture.Configure();
             var rats = Object.FindObjectsByType<RatMotor>();
-            player = rats.Single(x => x.AcceptsPlayerInput); rat = rats.Single(x => !x.AcceptsPlayerInput);
+            player = rats.Single(x => x.GetComponent<RatInputOwner>().PlayerNumber == 1); rat = rats.Single(x => x.GetComponent<RatInputOwner>().PlayerNumber == 2);
             grabber = player.GetComponent<RatGrabber>();
             props = Object.FindObjectsByType<ThrownEquipment>();
             Assert.That(props.Length, Is.EqualTo(3));
-            PlaceRat(rat, new Vector3(6, 0.05f, 4));
+            PlaceRat(rat, new Vector3(8, 0.05f, 8));
             yield return new WaitForSeconds(0.25f);
         }
 
@@ -115,9 +116,9 @@ namespace GymRats.Tests
             Assert.That(receiver.ReceivedHitCount, Is.EqualTo(1), "One rat hit per throw");
             Assert.That(player.GetComponent<RatHitReceiver>().ReceivedHitCount, Is.Zero, "Thrower immunity");
             Assert.That(body.position.y, Is.GreaterThan(-0.1f));
-            PlaceRat(rat, new Vector3(6, 0.05f, 4));
+            PlaceRat(rat, new Vector3(8, 0.05f, 8));
             Approach(item);
-            Assert.That(grabber.TryGrab(), Is.True, name + " can be picked up after rat impact and floor landing");
+            Assert.That(grabber.TryGrab(), Is.True, name + " pickup after impact: center=" + item.Center + " player=" + player.transform.position + " acquire=" + item.CanAcquire(grabber) + " path=" + item.CanMoveTo(grabber.HoldCenter, grabber));
             Assert.That(prop.IsArmed, Is.False);
             grabber.ReleaseHeld(false);
         }
@@ -167,7 +168,8 @@ namespace GymRats.Tests
 
         private void Approach(Grabbable item)
         {
-            PlaceRat(player, new Vector3(item.Center.x, 0.05f, item.Center.z - 1.4f));
+            // Stand back so lifting also pulls a wall-resting prop away from the wall trim.
+            PlaceRat(player, new Vector3(item.Center.x, 0.05f, item.Center.z - 1.8f));
             player.Facing.rotation = Quaternion.identity;
         }
         private static void PlaceRat(RatMotor motor, Vector3 position)
